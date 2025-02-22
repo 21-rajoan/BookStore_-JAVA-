@@ -1,0 +1,33 @@
+sudo: required
+
+language: java
+
+services:
+  - docker
+
+addons:
+  chrome: stable
+  browserstack:
+    username: "${BROWSERSTACK_USER}"
+    access_key: "${BROWSERSTACK_PASS}"
+
+before_install:
+
+- echo $USER
+- echo "********* Starting Up Docker Image ********";
+- docker-compose -f ./docker/docker-compose.yml up -d
+
+# get IP Address for remote selenium grid
+- ifconfig
+
+script:
+- echo "********* Setting up Tests ********";
+- npm install -g chromedriver@2.46.0
+- npm i --prefix ./e2e_test/webdriver-tests/
+- pwd
+- npm test --prefix ./e2e_test/webdriver-tests/
+- echo "********* Running Tests ********";
+- echo "********* Completed Running Tests ********";
+#- echo "********* Shutting Down Docker Images ********";
+#- cd ../../docker/
+#- docker-compose down
